@@ -21,11 +21,13 @@ namespace WebApplication.Services.Concrete
         public List<ManufacturerModel> GetManufacturers()
         {
             var result = from a in _context.Manufacturers
+                         join b in _context.Models on a.Id equals b.ManufacturerId
+                         group a by new { a.Id, a.ManufacturerName } into ga
                          select new ManufacturerModel
                          {
-                             Id = a.Id,
-                             ManufacturerName = a.ManufacturerName,
-                             NumberOfModel = a.Vehicles.Count
+                             Id = ga.Key.Id,
+                             ManufacturerName = ga.Key.ManufacturerName,
+                             NumberOfModel = ga.Count()
                          };
 
             return result.ToList();
